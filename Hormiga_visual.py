@@ -2,12 +2,12 @@ import pygame
 import random
 import sys
 import Hormiga_logica as hor
-tam = 8
-filas = 100
-columnas = 100
-tick = 1000
+tam = 3
+filas = 200
+columnas = 200
+tick = 0
 print("Bienvenido a el programa de la Hormiguita de Langton")
-regla = input("Ingrese la secuencia de giros (ej. RL, LRRLL, RLR): ").strip().upper()
+regla = input("Ingrese la secuencia de giros: ").strip().upper()
 while not regla or any(letra not in "LR" for letra in regla):
     print("Error: La regla solo puede contener letras 'L' y 'R'.")
     regla = input("Intente de nuevo: ").strip().upper()
@@ -15,7 +15,7 @@ while not regla or any(letra not in "LR" for letra in regla):
 
 def generar_colores(cantidad_colores):
     colores_base = [
-        (25, 40, 30),   
+        (20, 20, 30),   
         (255, 255, 0),    
         (255, 0, 192)    
     ]
@@ -35,15 +35,14 @@ paleta_colores = generar_colores(len(regla))
 def main():
     filaHormiga = filas // 2
     columnaHormiga = columnas // 2
-    
-    direccion = "U" 
+    direccion = "U"
     
     pygame.init()
     clock = pygame.time.Clock()
     M = hor.generar_matriz(filas, columnas)
     w, h = columnas * tam, filas * tam
     window = pygame.display.set_mode((w, h))
-    pygame.display.set_caption("Hormiga de Langton Generalizada")
+    pygame.display.set_caption("Hormiga de Langton Proyecto")
     
     loop = True
     pausa = False
@@ -64,7 +63,7 @@ def main():
                     c = x // tam
                     M[f][c] = (M[f][c] + 1) % len(regla)
                     
-        window.fill((0, 0, 0))
+        window.fill(paleta_colores[0])
         
         for f in range(filas):
             for c in range(columnas):
