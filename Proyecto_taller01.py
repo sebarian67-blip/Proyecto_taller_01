@@ -1,29 +1,19 @@
-import pygame
-tamaño_celda = 10
-columnas = 80
-filas = 60
-ancho = columnas * tamaño_celda
-alto = filas * tamaño_celda
+def generar_ramatriz(filas, columnas):
+    """ matriz puros 0s"""
 
-Pantalla = pygame.display.set_mode((ancho, alto))
-pygame.display.set_caption("Automata de la hormiguita")
+    return [[0 for c in range (columnas)] for f in range(filas)]
 
-reloj = pygame.time.Clock()
-FPS = 60
+def girar_hormiga(orientacion_actual, giro):
+    
+    giro_derecha = {"U": "R", "R": "D", "D": "L", "L": "U"}
+    giro_izquierda = {"U": "L", "L": "D", "D": "R", "R": "U"}
+    
+    if giro == "R":
+        return giro_derecha[orientacion_actual]
+    else:
+        return giro_izquierda[orientacion_actual]
 
-matriz = [[0 for _ in range(columnas)] for _ in range(filas)]
-hormiga_fila = filas//2
-hormiga_columna = columnas // 2
-
-orientacion_actual = 0
-
-def girar_hormiga(direccion):
-    global orientacion_actual
-
-    if direccion == "R":
-        orientacion_actual = (orientacion_actual +1) % 4
-    elif direccion == "L":
-        orientacion_actual = (orientacion_actual -1) % 4 
+        
 def avanzar_hormiga():
     global hormiga_fila, hormiga_columna
 
@@ -35,3 +25,28 @@ def avanzar_hormiga():
         hormiga_fila = (hormiga_fila +1) %fila
     elif orientacion_actual == 3:
         hormiga_columna = (hormiga_columna - 1) % columnas
+def avanzar_hormiga(filaHormiga, columnaHormiga, direccion, total_filas, total_columnas):
+    
+    if direccion == "R":
+        return filaHormiga, (columnaHormiga + 1) % total_columnas
+    
+    if direccion == "L":
+        return filaHormiga, (columnaHormiga - 1) % total_columnas
+    
+    if direccion == "U":
+        return (filaHormiga - 1) % total_filas, columnaHormiga
+    
+    if direccion == "D":
+        return (filaHormiga + 1) % total_filas, columnaHormiga
+
+def transicion(M, filaHormiga, columnaHormiga, regla):
+   
+    total_colores = len(regla)
+    
+    color_actual = M[filaHormiga][columnaHormiga]
+    
+    siguiente_color = (color_actual + 1) % total_colores
+    
+    M[filaHormiga][columnaHormiga] = siguiente_color
+    
+    return M
