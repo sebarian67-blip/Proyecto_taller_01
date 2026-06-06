@@ -2,40 +2,51 @@ import pygame
 import random
 import sys
 import Hormiga_logica as hor
+import colorsys
 tam = 3
 filas = 200
 columnas = 200
 tick = 0
-print("Bienvenido a el programa de la Hormiguita de Langton")
-regla = input("Ingrese la secuencia de giros: ").strip().upper()
-while not regla or any(letra not in "LR" for letra in regla):
-    print("Error: La regla solo puede contener letras 'L' y 'R'.")
-    regla = input("Intente de nuevo: ").strip().upper()
-
 
 def generar_colores(cantidad_colores):
-    colores_base = [
-        (20, 20, 30),   
-        (255, 255, 0),    
-        (255, 0, 192)    
-    ]
-    colores = []
-    for i in range(cantidad_colores):
-        if i < len(colores_base):
-            colores.append(colores_base[i])
-        else:
-            r = random.choice([100, 255])
-            g = random.choice([100, 255])
-            b = random.choice([100, 255])
-            colores.append((r, g, b))
-            
+    """Funcion encargada de generar los colores que
+    la hormiga usa para "pintar":
+    Entradas: Recibe como parametro:
+        - cantidad_colores
+    Restricciones: no tiene, evaluadas en el main
+    Salidas:
+        - colores"""
+    colores = [(25, 40, 30)]  
+    
+    if cantidad_colores <= 1:
+        return colores
+    pasos = cantidad_colores - 1
+    for i in range(pasos):
+        colosh = i / pasos
+        r, g, b = colorsys.hsv_to_rgb(colosh, 1.0, 1.0)
+        
+        colores.append((int(r * 255), int(g * 255), int(b * 255)))
+        
     return colores
-paleta_colores = generar_colores(len(regla))
+
 
 def main():
+    """Funcion principal de el programa encargada de recibir y llamar a las demás funciones:
+    Entradas:
+        - regla
+    Restricciones: regla debe de ser una combinacion de Ls o Rs.
+    Salidas:
+        - Generacion de la hormiga"""
+    regla = input("Ingrese la secuencia de giros: ").strip().upper()
+    while not regla or any(letra not in "LR" for letra in regla):
+        print("Error: La regla solo puede contener letras 'L' y 'R'.")
+        regla = input("Intente de nuevo: ").strip().upper()
+
+    paleta_colores = generar_colores(len(regla))
+    
     filaHormiga = filas // 2
     columnaHormiga = columnas // 2
-    direccion = "U"
+    direccion = "R"
     
     pygame.init()
     clock = pygame.time.Clock()
