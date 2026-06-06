@@ -3,6 +3,9 @@ import random
 import sys
 import Hormiga_logica as hor
 import colorsys
+import easygui
+import pickle
+
 tam = 3
 filas = 200
 columnas = 200
@@ -31,16 +34,30 @@ def generar_colores(cantidad_colores):
 
 
 def main():
+    global filas, columnas, tam
     """Funcion principal de el programa encargada de recibir y llamar a las demás funciones:
     Entradas:
         - regla
     Restricciones: regla debe de ser una combinacion de Ls o Rs.
     Salidas:
         - Generacion de la hormiga"""
-    regla = input("Ingrese la secuencia de giros: ").strip().upper()
-    while not regla or any(letra not in "LR" for letra in regla):
-        print("Error: La regla solo puede contener letras 'L' y 'R'.")
-        regla = input("Intente de nuevo: ").strip().upper()
+    campos = ["Filas", "Columnas", "Tamaño de celda", "Regla (L/R)"]
+    valores = easygui.multenterbox("Parámetros iniciales", "Hormiga de Langton", campos, [str(filas), str(columnas), str(tam), "RL"])
+    if valores is None:
+        return
+    try:
+        filas = int(valores[0])
+        columnas = int(valores[1])
+        tam = int(valores[2])
+        regla = valores[3].strip().upper()
+        while not regla or any(letra not in "LR" for letra in regla):
+            regla = easygui.enterbox("Regla inválida. Solo L y R. Intente de nuevo:", "Error")
+            if regla is None:
+                return
+            regla = regla.strip().upper()
+    except:
+        easygui.msgbox("Datos inválidos", "Error")
+        return
 
     paleta_colores = generar_colores(len(regla))
     
@@ -66,13 +83,53 @@ def main():
                 keys = pygame.key.get_pressed()
                 if keys[pygame.K_SPACE]:
                     pausa = not pausa
+                if event.key == pygame.K_g:
+                    datos = {
+                        "M": M,
+                        "filas": filas,
+                        "columnas": columnas,
+                        "tam": tam,
+                        "regla": regla,
+                        "paleta_colores": paleta_colores,
+                        "filaHormiga": filaHormiga,
+                        "columnaHormiga": columnaHormiga,
+                        "direccion": direccion
+                    }
+                    with open("langton_save.pkl", "wb") as f:
+                        pickle.dump(datos, f)
+                if event.key == pygame.K_c:
+                    try:
+                        with open("langton_save.pkl", "rb") as f:
+                            datos = pickle.load(f)
+                        M = datos["M"]
+                        filas = datos["filas"]
+                        columnas = datos["columnas"]
+                        tam = datos["tam"]
+                        regla = datos["regla"]
+                        paleta_colores = datos["paleta_colores"]
+                        filaHormiga = datos["filaHormiga"]
+                        columnaHormiga = datos["columnaHormiga"]
+                        direccion = datos["direccion"]
+                        w, h = columnas * tam, filas * tam
+                        window = pygame.display.set_mode((w, h))
+                    except:
+                        pass
+                if event.key == pygame.K_r:
+                    for f in range(filas):
+                        for c in range(columnas):
+                            M[f][c] = random.randint(0, len(regla)-1)
+                if event.key == pygame.K_b:
+                    for f in range(filas):
+                        for c in range(columnas):
+                            M[f][c] = 0
             if event.type == pygame.MOUSEBUTTONDOWN:
                 buttons = pygame.mouse.get_pressed()
                 x, y = pygame.mouse.get_pos()
                 if buttons[0]:
                     f = y // tam
                     c = x // tam
-                    M[f][c] = (M[f][c] + 1) % len(regla)
+                    if 0 <= f < filas and 0 <= c < columnas:
+                        M[f][c] = (M[f][c] + 1) % len(regla)
                     
         window.fill(paleta_colores[0])
         
