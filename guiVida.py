@@ -6,6 +6,18 @@ import easygui
 tick = 10
 
 def pedir_parametros():
+    """
+    Propósito: ingresar los parámetros iniciales.
+    Entradas:
+        None
+    Restricciones:
+        None
+    Salidas:
+        b: str (dígitos del '0' al '8').
+        s: str (dígitos del '0' al '8').
+        filas: int (positivo, de 1 a 10000).
+        columnas: int (positivo, de 1 a 10000).
+        tam: int (positivo, de 1 a 50)."""
     b = easygui.enterbox("Ingrese String B (nacimiento, ej: 3):", "Reglas B")
     s = easygui.enterbox("Ingrese String S (supervivencia, ej: 23):", "Reglas S")
     filas = easygui.integerbox("Cantidad de filas:", "Dimensiones", default=200, lowerbound=1, upperbound=10000)
@@ -14,11 +26,19 @@ def pedir_parametros():
     return b, s, filas, columnas, tam
 
 def main():
+    """
+    Propósito: ejecutar el bucle principal del autómata celular controlando la interfaz gráfica y los eventos.
+    Entradas:
+        Ninguna directa (obtiene b, s, filas, columnas, tam desde la función pedir_parametros).
+    Restricciones:
+        None
+    Salidas:
+        None"""
     b,s,filas,columnas,tam = pedir_parametros()
     if not s.isdigit() or not b.isdigit() or "9" in s or "9" in b:
         raise Exception("ERROR!! ESO NO SE HACE, B y S deben contener solo números del 0 al 8.")
-    if type(filas) != int or type(columnas) != int or type(tam) != int:
-        raise Exception("ERROR!! ESO NO SE HACE, para la cantidad de filas, columna y tamaño use números enteros.")
+    if type(filas) != int or type(columnas) != int or type(tam) != int or filas<0 or columnas<0 or tam<0:
+        raise Exception("ERROR!! ESO NO SE HACE, para la cantidad de filas, columna y tamaño use números enteros positivos.")
     
     pygame.init()
     clock = pygame.time.Clock()
