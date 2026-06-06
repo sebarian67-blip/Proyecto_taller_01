@@ -2,6 +2,9 @@ import easygui
 import sys
 
 def main():
+    """Propósito: seleccionar cual programa ejecutar.
+        Entradas: solo seleciona
+        Salidas: none"""
     opcion = easygui.buttonbox("Seleccione el autómata celular a ejecutar:",
                                title="Autómatas Celulares",
                                choices=["Hormiga de Langton", "Juego de la Vida (Life-Like)", "Salir"])
